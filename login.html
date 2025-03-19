@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOGIN</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <form action="#">
+            <h3>LOGIN</h3>
+            <div class="inputs">
+                <label for="email"> Enter Your Email : </label>
+                <input type="email" id="email" autocomplete="email" required>
+            </div>
+            <div class="inputs">
+                <label for="password"> Enter Your Password : </label>
+                <input type="password" id="password" autocomplete="current-password" required>
+            </div>
+            <div class="inputs">
+                <input type="submit" id="login" name="login" value="login">
+            </div>
+
+            <small>Don't have an account?</small> <a href="/index.html" target="_self">Create a new one</a>
+        </form>
+    </div>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
+        import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+        // You don't need to import getFirestore since you're not using Firestore
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcZlDj6_hXg7lrDBIcBcpKv4EiRQbl5BQ",
+            authDomain: "authentication-app-26e35.firebaseapp.com",
+            databaseURL: "https://authentication-app-26e35-default-rtdb.firebaseio.com",
+            projectId: "authentication-app-26e35",
+            storageBucket: "authentication-app-26e35.appspot.com",
+            messagingSenderId: "489295893795",
+            appId: "1:489295893795:web:e420af7df0302fb091a896"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth();
+        const loginButton = document.getElementById('login');
+
+        loginButton.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent form submission
+
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed in 
+                    const user = userCredential.user;
+
+                    const dt = new Date();
+                    update(ref(database, 'users/' + user.uid), {
+                        last_login: dt
+                    });
+
+                    alert('User logged In !');
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+
+                    alert(errorMessage);
+                });
+        });
+    </script>
+</body>
+
+</html>
+
+
