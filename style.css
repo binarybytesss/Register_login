@@ -43,7 +43,7 @@ label {
 }
 
 input {
-    width: 100%;
+    width: 75%;
     padding: 12px;
     border: none;
     border-radius: 10px;
@@ -60,7 +60,7 @@ input:focus {
 }
 
 button {
-    background-color: #005f73;
+    background-color: #006273;
     color: #fff;
     padding: 12px;
     font-size: 16px;
