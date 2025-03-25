@@ -16,6 +16,7 @@ body {
     box-shadow: 0 20px 30px rgba(0, 0, 0, 0.25);
     border-radius: 20px;
     backdrop-filter: blur(10px);
+    color: black;
 }
 
 form {
@@ -25,7 +26,7 @@ form {
 
 h3 {
     text-align: center;
-    color: #005f73;
+    color: black;
     margin-bottom: 20px;
     font-weight: 600;
 }
@@ -37,7 +38,7 @@ h3 {
 label {
     display: block;
     margin-bottom: 8px;
-    color: #005f73;
+    color: black;
     font-weight: 500;
 }
 
@@ -50,6 +51,7 @@ input {
     box-shadow: inset 4px 4px 8px #aacfd0, inset -4px -4px 8px #ffffff;
     outline: none;
     font-size: 14px;
+    color: black;
 }
 
 input:focus {
