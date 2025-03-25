@@ -69,6 +69,8 @@
                     const token = credential.accessToken;
                     // The signed-in user info.
                     const user = result.user;
+                    console.log(user);
+                    alert('User logged In !');
                     // IdP data available using getAdditionalUserInfo(result)
                     // ...
                 }).catch((error) => {
@@ -102,7 +104,7 @@
                         last_login: dt
                     });
 
-                    alert('aUser logged In !');
+                    alert('User logged In !');
                 })
                 .catch((error) => {
                     const errorCode = error.code;
