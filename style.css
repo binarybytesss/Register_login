@@ -59,8 +59,8 @@ input:focus {
     border: 1px solid #005f73;
 }
 
-button {
-    background-color: #006273;
+button, .buttons {
+    background-color: #005f73;
     color: #fff;
     padding: 12px;
     font-size: 16px;
@@ -70,11 +70,11 @@ button {
     transition: background-color 0.3s ease;
 }
 
-button:hover {
+button:hover, .buttons:hover {
     background-color: #003f4b;
 }
 
-button:active {
+button:active, .buttons:active {
     transform: scale(0.98);
 }
 
