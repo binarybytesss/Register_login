@@ -24,9 +24,9 @@
                 <input type="submit" id="login" name="login" value="login">
             </div>
             <div class="inputs">
-                <button  id="google-login-btn" class="google-button">
+                <button id="google-login-btn" class="google-button">
                     <i class="fab fa-google"></i> Login with Google
-                    </button>
+                </button>
             </div>
 
             <small>Don't have an account?</small> <a href="/index.html" target="_self">Create a new one</a>
@@ -59,9 +59,30 @@
         const provider = new GoogleAuthProvider();
         const loginButton = document.getElementById('login');
 
-        const googleLogin= document.getElementId("google-login-btn");
-        googleLogin.addEventListener("click", function(){
-            alert(5)
+        const googleLogin = document.getElementId("google-login-btn");
+        googleLogin.addEventListener("click", function () {
+
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    // This gives you a Google Access Token. You can use it to access the Google API.
+                    const credential = GoogleAuthProvider.credentialFromResult(result);
+                    const token = credential.accessToken;
+                    // The signed-in user info.
+                    const user = result.user;
+                    // IdP data available using getAdditionalUserInfo(result)
+                    // ...
+                }).catch((error) => {
+                    // Handle Errors here.
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    // The email of the user's account used.
+                    const email = error.customData.email;
+                    // The AuthCredential type that was used.
+                    const credential = GoogleAuthProvider.credentialFromError(error);
+                    // ...
+                });
+
+
         })
 
 
@@ -94,5 +115,3 @@
 </body>
 
 </html>
-
-
