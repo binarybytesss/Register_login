@@ -59,6 +59,12 @@
         const provider = new GoogleAuthProvider();
         const loginButton = document.getElementById('login');
 
+        const googleLogin= document.getElementId("google-login-btn");
+        googleLogin.addEventListener("click", function(){
+            alert(5)
+        })
+
+
         loginButton.addEventListener('click', (e) => {
             e.preventDefault(); // Prevent form submission
 
