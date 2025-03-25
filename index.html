@@ -48,6 +48,17 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js";
 
+const firebaseConfig = {
+        apiKey: "AIzaSyBcZlDj6_hXg7lrDBIcBcpKv4EiRQbl5BQ",
+        authDomain: "authentication-app-26e35.firebaseapp.com",
+        databaseURL: "https://authentication-app-26e35-default-rtdb.firebaseio.com",
+        projectId: "authentication-app-26e35",
+        storageBucket: "authentication-app-26e35.appspot.com",
+        messagingSenderId: "489295893795",
+        appId: "1:489295893795:web:e420af7df0302fb091a896"
+    };
+
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
