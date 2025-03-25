@@ -23,6 +23,11 @@
             <div class="inputs">
                 <input type="submit" id="login" name="login" value="login">
             </div>
+            <div class="inputs">
+                <button  id="google-login-btn" class="google-button">
+                    <i class="fab fa-google"></i> Login with Google
+                    </button>
+            </div>
 
             <small>Don't have an account?</small> <a href="/index.html" target="_self">Create a new one</a>
         </form>
@@ -32,7 +37,7 @@
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
         import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js";
-        import { getAuth,googleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+        import { getAuth, googleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
         // You don't need to import getFirestore since you're not using Firestore
 
         // Your web app's Firebase configuration
@@ -50,6 +55,8 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
         const auth = getAuth();
+        auth.languageCode = 'it'
+        const provider = new GoogleAuthProvider();
         const loginButton = document.getElementById('login');
 
         loginButton.addEventListener('click', (e) => {
