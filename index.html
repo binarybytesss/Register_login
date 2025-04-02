@@ -13,118 +13,88 @@
         <form action="#">
             <h3>LOGIN</h3>
             <div class="inputs">
-                <label for="email">Enter Your Email:</label>
+                <label for="email"> Enter Your Email : </label>
                 <input type="email" id="email" autocomplete="email" required>
             </div>
             <div class="inputs">
-                <label for="password">Enter Your Password:</label>
+                <label for="password"> Enter Your Password : </label>
                 <input type="password" id="password" autocomplete="current-password" required>
             </div>
             <div class="inputs">
-                <input type="submit" id="login" name="login" value="Login">
+                <input type="submit" id="login" name="login" value="login">
             </div>
             <div class="buttons">
-                <button type="button" id="google-login-btn" class="google-button">
+                <button id="google-login-btn" class="google-button">
                     <i class="fab fa-google"></i> Login with Google
                 </button>
             </div>
-            <small>Don't have an account?</small> <a href="/index.html">Create a new one</a>
+
+            <small>Don't have an account?</small> <a href="/index.html" target="_self">Create a new one</a>
         </form>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
 
-        // 🔥 Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBcZlDj6_hXg7lrDBIcBcpKv4EiRQbl5BQ",
-            authDomain: "authentication-app-26e35.firebaseapp.com",
-            projectId: "authentication-app-26e35",
-            storageBucket: "authentication-app-26e35.appspot.com",
-            messagingSenderId: "489295893795",
-            appId: "1:489295893795:web:e420af7df0302fb091a896"
-        };
+// Firebase Config
+const firebaseConfig = {
+    apiKey: "AIzaSyBcZlDj6_hXg7lrDBIcBcpKv4EiRQbl5BQ",
+    authDomain: "authentication-app-26e35.firebaseapp.com",
+    databaseURL: "https://authentication-app-26e35-default-rtdb.firebaseio.com",
+    projectId: "authentication-app-26e35",
+    storageBucket: "authentication-app-26e35.appspot.com",
+    messagingSenderId: "489295893795",
+    appId: "1:489295893795:web:e420af7df0302fb091a896"
+};
 
-        // ✅ Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth();
-        const provider = new GoogleAuthProvider();
-        auth.languageCode = 'en';
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+const auth = getAuth();
+const provider = new GoogleAuthProvider();
+auth.languageCode = 'en';
 
-        console.log("Firestore initialized:", db);
+// Google Sign-In
+const googleLogin = document.getElementById("google-login-btn");
+googleLogin.addEventListener("click", function () {
+    signInWithPopup(auth, provider)
+        .then((result) => {
+            const user = result.user;
+            console.log(user);
+            alert('User logged in with Google!');
 
-        // 🔹 Google Sign-In
-        document.getElementById("google-login-btn").addEventListener("click", async () => {
-            try {
-                const result = await signInWithPopup(auth, provider);
-                const user = result.user;
-                console.log("Google Login User:", user);
-
-                // 🔥 Check if user exists in Firestore
-                const userRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userRef);
-
-                if (!userSnap.exists()) {
-                    // If new user, store all details
-                    await setDoc(userRef, {
-                        email: user.email,
-                        displayName: user.displayName || "",
-                        last_login: serverTimestamp(),
-                        provider: "Google"
-                    });
-                } else {
-                    // If existing user, update last login
-                    await updateDoc(userRef, {
-                        last_login: serverTimestamp()
-                    });
-                }
-
-                alert('User logged in with Google!');
-            } catch (error) {
-                console.error("Google Login Error:", error);
-                alert(error.message);
-            }
+            const dt = new Date();
+            update(ref(database, 'users/' + user.uid), {
+                last_login: dt
+            });
+        })
+        .catch((error) => {
+            alert(error.message);
         });
+});
 
-        // 🔹 Email and Password Login
-        document.getElementById('login').addEventListener('click', async (e) => {
-            e.preventDefault();
+// Email and Password Login
+const loginButton = document.getElementById('login');
+loginButton.addEventListener('click', (e) => {
+    e.preventDefault();
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
 
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                console.log("Email Login User:", user);
-
-                // 🔥 Check if user exists in Firestore
-                const userRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userRef);
-
-                if (!userSnap.exists()) {
-                    // If new user, store details
-                    await setDoc(userRef, {
-                        email: user.email,
-                        last_login: serverTimestamp(),
-                        provider: "Email/Password"
-                    });
-                } else {
-                    // If existing user, update last login
-                    await updateDoc(userRef, {
-                        last_login: serverTimestamp()
-                    });
-                }
-
-                alert('User logged in!');
-            } catch (error) {
-                console.error("Email Login Error:", error);
-                alert(error.message);
-            }
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            const user = userCredential.user;
+            const dt = new Date();
+            update(ref(database, 'users/' + user.uid), {
+                last_login: dt
+            });
+            alert('User logged in!');
+        })
+        .catch((error) => {
+            alert(error.message);
         });
+});
 
     </script>
 </body>
