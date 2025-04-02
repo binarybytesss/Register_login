@@ -4,97 +4,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOGIN</title>
+    <title>Signup</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
         <form action="#">
-            <h3>LOGIN</h3>
+            <h3>SIGNUP</h3>
             <div class="inputs">
-                <label for="email"> Enter Your Email : </label>
+                <label for="name"> Enter Your Name: </label>
+                <input type="text" id="name" autocomplete="name" required>
+            </div>
+            <div class="inputs">
+                <label for="email"> Enter Your Email: </label>
                 <input type="email" id="email" autocomplete="email" required>
             </div>
             <div class="inputs">
-                <label for="password"> Enter Your Password : </label>
-                <input type="password" id="password" autocomplete="current-password" required>
+                <label for="password"> Enter Your Password: </label>
+                <input type="password" id="password" autocomplete="new-password" required>
             </div>
             <div class="inputs">
-                <input type="submit" id="login" name="login" value="login">
+                <input type="submit" id="signup" name="signup" value="Signup">
             </div>
             <div class="buttons">
-                <button id="google-login-btn" class="google-button">
-                    <i class="fab fa-google"></i> Login with Google
+                <button id="google-signup-btn" class="google-button">
+                    <i class="fab fa-google"></i> Signup with Google
                 </button>
             </div>
-
-            <small>Don't have an account?</small> <a href="/index.html" target="_self">Create a new one</a>
+            <small>Already have an account?</small> <a href="login.html" target="_self">Login here</a>
         </form>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
-import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
 
-// Firebase Config
-const firebaseConfig = {
-    apiKey: "AIzaSyBcZlDj6_hXg7lrDBIcBcpKv4EiRQbl5BQ",
-    authDomain: "authentication-app-26e35.firebaseapp.com",
-    databaseURL: "https://authentication-app-26e35-default-rtdb.firebaseio.com",
-    projectId: "authentication-app-26e35",
-    storageBucket: "authentication-app-26e35.appspot.com",
-    messagingSenderId: "489295893795",
-    appId: "1:489295893795:web:e420af7df0302fb091a896"
-};
+        // 🔥 Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcZlDj6_hXg7lrDBIcBcpKv4EiRQbl5BQ",
+            authDomain: "authentication-app-26e35.firebaseapp.com",
+            databaseURL: "https://authentication-app-26e35-default-rtdb.firebaseio.com",
+            projectId: "authentication-app-26e35",
+            storageBucket: "authentication-app-26e35.appspot.com",
+            messagingSenderId: "489295893795",
+            appId: "1:489295893795:web:e420af7df0302fb091a896"
+        };
 
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
-const auth = getAuth();
-const provider = new GoogleAuthProvider();
-auth.languageCode = 'en';
+        //  Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth();
+        const provider = new GoogleAuthProvider();
+        auth.languageCode = 'en';
 
-// Google Sign-In
-const googleLogin = document.getElementById("google-login-btn");
-googleLogin.addEventListener("click", function () {
-    signInWithPopup(auth, provider)
-        .then((result) => {
-            const user = result.user;
-            console.log(user);
-            alert('User logged in with Google!');
+        console.log("Firebase initialized");
 
-            const dt = new Date();
-            update(ref(database, 'users/' + user.uid), {
-                last_login: dt
-            });
-        })
-        .catch((error) => {
-            alert(error.message);
+        // 🔹 Google Sign-Up
+        document.getElementById("google-signup-btn").addEventListener("click", () => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
+                    console.log("Google Signup User:", user);
+
+                    set(ref(database, 'users/' + user.uid), {
+                        name: user.displayName || "No Name",
+                        email: user.email,
+                        created_at: new Date().toISOString(),
+                        provider: "Google"
+                    });
+
+                    alert('Signup successful with Google!');
+                })
+                .catch((error) => {
+                    console.error("Google Signup Error:", error);
+                    alert(error.message);
+                });
         });
-});
 
-// Email and Password Login
-const loginButton = document.getElementById('login');
-loginButton.addEventListener('click', (e) => {
-    e.preventDefault();
+        // 🔹 Email and Password Signup
+        document.getElementById('signup').addEventListener('click', (e) => {
+            e.preventDefault();
 
-    var email = document.getElementById('email').value;
-    var password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
-    signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            const user = userCredential.user;
-            const dt = new Date();
-            update(ref(database, 'users/' + user.uid), {
-                last_login: dt
-            });
-            alert('User logged in!');
-        })
-        .catch((error) => {
-            alert(error.message);
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log("Email Signup User:", user);
+
+                    set(ref(database, 'users/' + user.uid), {
+                        name: name,
+                        email: email,
+                        created_at: new Date().toISOString(),
+                        provider: "Email/Password"
+                    });
+
+                    alert('Signup successful!');
+                })
+                .catch((error) => {
+                    console.error("Signup Error:", error);
+                    alert(error.message);
+                });
         });
-});
 
     </script>
 </body>
